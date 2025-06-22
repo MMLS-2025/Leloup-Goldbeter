@@ -1,5 +1,5 @@
-function dydt = LG_light(t, y, p)
-    dydt = zeros(16, 1);
+function dydt = LG_full(t, y, p)
+    dydt = zeros(19, 1);
 
     M_P = y(1);
     M_C = y(2);
@@ -21,6 +21,10 @@ function dydt = LG_light(t, y, p)
     B_NP = y(15);
     
     I_N = y(16);
+
+    M_R = y(17); % new
+    R_C = y(18); % new
+    R_N = y(19); % new
 
     k_1 = p(1);
     k_2 = p(2);
@@ -74,20 +78,28 @@ function dydt = LG_light(t, y, p)
     v_mP = p(50);
     v_sB = p(51);
     v_sC = p(52);
+    v_sP = p(53);
+    % jump over v_sPmax
+    v_sR = p(55); % new
+    K_AR = p(56); % new
+    v_mR = p(57); % new
+    K_mR = p(58); % new
+    k_dmr = p(59); % new
+    k_sR = p(60); % new
+    k_9 = p(61); % new
+    k_10 = p(62); % new
+    v_dRC = p(63); % new
+    v_dRN = p(64); % new
+    h = p(65); % new
 
-    if mod(t, 24) < 12
-        v_sP = p(54);   % Light phase
-    else
-        v_sP = p(53);   % Dark phase
-    end
 
+    % dM_p
     dydt(1) = v_sP*(B_N^n)/(K_AP^n + B_N^n) - v_mP*M_P/(K_mP + M_P) - k_dmp*M_P;
-
     % dM_C
     dydt(2) = v_sC*(B_N^n)/(K_AC^n + B_N^n) - v_mC*M_C/(K_mC + M_C) - k_dmc*M_C;
-    % dM_B
-    dydt(3) = v_sB*(K_IB^m)/(K_IB^m + B_N^m) - v_mB*M_B/(K_mB + M_B) - k_dmb*M_B;
-
+    % dM_B; is replaced!
+    % dydt(3) = v_sB*(K_IB^m)/(K_IB^m + B_N^m) - v_mB*M_B/(K_mB + M_B) - k_dmb*M_B;
+    dydt(3) = v_sB*(K_IB^m)/(K_IB^m + R_N^m) - v_mB*M_B/(K_mB + M_B) - k_dmb*M_B;
     % dP_C
     dydt(4) = k_sP*M_P - V_1P*P_C/(K_p + P_C) + V_2P*P_CP/(K_dp + P_CP) + k_4*PC_C - k_3*P_C*C_C - k_dn*P_C;
     % dC_C
@@ -118,4 +130,10 @@ function dydt = LG_light(t, y, p)
     % dI_N
     dydt(16) = -k_8*I_N + k_7*B_N*PC_N - v_dIN*I_N/(K_d + I_N) - k_dn*I_N;
 
+    % dM_R
+    dydt(17) = v_sR*(B_N^h)/(K_AR^h + B_N^h) - v_mR*M_R/(K_mR + M_R) - k_dmr*M_R;
+    % dR_C
+    dydt(18) = k_sR*M_R - k_9*R_C + k_10*R_N - v_dRC*R_C/(K_d + R_C) - k_dn*R_C;
+    % dR_N
+    dydt(19) = k_9*R_C - k_10*R_N - v_dRN*R_N/(K_d + R_N) - k_dn*R_N;
 end
