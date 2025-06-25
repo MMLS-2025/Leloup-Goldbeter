@@ -6,7 +6,7 @@ LG_light.m: LG model with v_sP square wave
 
 period_peak.m: calculate period of Per mRNA when the simulation become stable (when to be stable need to be modified by yourself)
 
-LG_fixed.mlx: how to use, standard plot examples
+LG_fixed.mlx: how to use, standard plot examples, and no PER protein version.
 
 LG_full.m and LG_full_light.m: LG model (full)
 
@@ -24,7 +24,7 @@ adjust params to simulate diseases: FASPS, Non-24-hour sleep-wake syndrome, etc.
 
 ablation experiments: 
 
-**no PER protein:** set k_sP = 0; you may calculate period with other variables?
+**no PER protein:** set k_sP = 0; you may calculate period with other variables?  (DOWN)
 
 It is reported that set $m$ from 2 to 4 can reproduce oscillations.
 
