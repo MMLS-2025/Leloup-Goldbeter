@@ -40,9 +40,9 @@ function dydt = LG_VIP_total(t, y, p_0, p, N, epsilon, alpha, v_sP0, is_LD)
     gamma = 1/epsilon .* (alpha * rho);
     beta = gamma ./ (K_D + gamma);
     Ca = (v_0 + v_1 .* beta + v_2 .* delta)./k;
-    v_K = V_MK*Ca/(K_a+Ca);
+    v_K = V_MK.*Ca./(K_a+Ca);
 
-    lambda = CB_T.*CB_P/(K_C+CB_T.*CB_P);
+    lambda = CB_T.*CB_P./(K_C+CB_T.*CB_P);
     v_sP = v_sP0 + C_T.*lambda;
 
     for i = 1:N

@@ -1,3 +1,3 @@
-function epsilon = calculate_eps(alpha)
-    epsilon = mean(alpha(:));
+function epsilon = calculate_eps(N, alpha)
+    epsilon = N * mean(alpha(:));
 end
