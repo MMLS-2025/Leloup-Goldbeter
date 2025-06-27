@@ -12,7 +12,7 @@ LG_full.m and LG_full_light.m: LG model (full)
 
 LG2.mlx: test for full model
 
-
+Lyapunov.m, Nullcline.m, Hopf.m are all mathematical analysis
 
 TODO:
 
