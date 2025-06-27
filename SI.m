@@ -1,28 +1,50 @@
-function [SI_t, theta] = SI(M_P)
-% compute_synchronization_index - 计算每个时间点的同步指数 SI(t)
+function [SI_t, theta] = SI(M_P, t)
+% SI - 计算瞬时同步指数 SI(t)，基于波峰提取相位
 %
 % 输入：
-%   M_P   - 一个 [T x N] 的实数矩阵，T 是时间点数，N 是细胞数，
-%           每列对应一个细胞的 Per mRNA 表达随时间变化的轨迹
+%   M_P  - [T x N] 数组，每列为一个细胞的变量时间序列（如 Per mRNA）
+%   t    - [T x 1] 时间向量，所有细胞共用统一时间轴
 %
 % 输出：
-%   SI_t  - 一个长度为 T 的向量，对应每个时间点的同步指数（取值 0~1）
-%   theta - 一个 [T x N] 的相位矩阵，每个元素为对应细胞的瞬时相位（单位：弧度）
+%   SI_t   - [T x 1] 向量，表示每个时间点的同步指数（0~1）
+%   theta  - [T x N] 相位矩阵，单位为弧度 [0, 2π]，NaN 表示该时间点未定义
 
-    % 检查输入维度
     [T, N] = size(M_P);
-
-    % 初始化相位矩阵
-    theta = zeros(T, N);
-
-    % 对每个细胞应用希尔伯特变换以提取相位
-    for j = 1:N
-        analytic_signal = hilbert(M_P(:, j));
-        theta(:, j) = angle(analytic_signal);  % 提取相位
+    
+    if ~isequal(size(t), [T, 1])
+        error('输入时间向量 t 必须是 [T x 1] 的列向量，且与 M_P 行数一致。');
     end
 
-    % 计算每个时间点的同步指数
-    SI_t = abs(mean(exp(1i * theta), 2));  % 按行计算平均相量模长
+    theta = nan(T, N);  % 相位矩阵初始化
 
+    % --- 为每个细胞提取相位 ---
+    for j = 1:N
+        signal = M_P(:, j);
+
+        % 查找波峰位置
+        [~, locs] = findpeaks(signal, t);
+
+        % 至少需要两个波峰定义一个周期
+        if length(locs) < 2
+            continue;
+        end
+
+        % 在线性插值范围内定义相位
+        for k = 1:length(locs)-1
+            t1 = locs(k);
+            t2 = locs(k+1);
+            idx = t >= t1 & t <= t2;
+            theta(idx, j) = 2 * pi * (t(idx) - t1) / (t2 - t1);
+        end
+    end
+
+    % --- 计算 SI(t) ---
+    SI_t = nan(T, 1);
+    for i = 1:T
+        phis = theta(i, :);
+        if any(isnan(phis))
+            continue;
+        end
+        SI_t(i) = abs(mean(exp(1i * phis)));
+    end
 end
-

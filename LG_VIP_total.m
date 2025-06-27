@@ -42,6 +42,12 @@ function dydt = LG_VIP_total(t, y, p_0, p, N, epsilon, alpha, v_sP0, is_LD,t_max
     if t_max ~= -1 && t > t_max
         beta = zeros(size(beta));
     end
+    if is_LD
+        if mod(t, 24) < 12
+            beta = ones(size(beta));
+        end
+    end
+ 
     Ca = (v_0 + v_1 .* beta + v_2 .* delta)./k;
     v_K = V_MK.*Ca./(K_a+Ca);
 
