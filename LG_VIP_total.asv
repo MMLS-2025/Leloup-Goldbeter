@@ -39,9 +39,8 @@ function dydt = LG_VIP_total(t, y, p_0, p, N, epsilon, alpha, v_sP0, is_LD,t_max
     rho = a .* M_P ./ (M_P + b);
     gamma = 1/epsilon .* (alpha * rho);
     beta = gamma ./ (K_D + gamma);
-    if t_max ~= -1 && t > t_max
-        beta = zeros(size(beta));
-    end
+    if t_max ~= -1 && t > t_max:
+        beta = 
     Ca = (v_0 + v_1 .* beta + v_2 .* delta)./k;
     v_K = V_MK.*Ca./(K_a+Ca);
 
